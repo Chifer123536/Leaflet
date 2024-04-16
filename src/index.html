@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Realtime location tracker</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet/dist/leaflet.js"></script>
+    <script src="./js/leaflet.rotatedMarker.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.130.1/build/three.min.js"></script>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="dashboard container-fluid">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <img src="./images/satelliteIcon.png" alt="satelliteIcon" />
+              <div id="satellites">Satellites: None</div>
+              <img src="./images/transition.png" />
+              <div id="latitude">Latitude: None</div>
+              <img src="./images/transition.png" />
+              <div id="longitude">Longitude: None</div>
+              <img src="./images/transition.png" />
+            </li>
+            <li class="nav-item">
+              <div id="time">Time: None</div>
+              <img src="./images/transition.png" />
+            </li>
+            <li class="nav-item">
+              <img src="./images/battery.png" alt="battery" />
+              <div id="batteryCharge">None %</div>
+              <img src="./images/transition.png" />
+              <div id="batteryVoltage">None V</div>
+              <img src="./images/transition.png" />
+              <div id="batteryCurrent">None A</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div id="map">
+      <div class="map-overlay">
+        <img src="./images/places.png" alt="" class="map-overlay-image" />
+        <img src="./images/white_frame.png" alt="" id="white_frame" />
+        <div class="horizon">
+          <img class="horizon-circle" src="./images/horizont-circle.png" alt="Circle" />
+        </div>
+        <div class="compass">
+          <img src="./images/compass.png" alt="Compass" class="map-overlay-compass" />
+          <div class="map-overlay-arrow"></div>
+          <div id="azimuth">None</div>
+        </div>
+      </div>
+      <div class="servo_output_raw"></div>
+      <img src="./images/place_for_update_servo_output_raw.png" class="place_for_update_servo_output_raw" alt="" />
+    </div>
+    <div class="place_for_flight_mode">
+      <img src="./images/place_for_flight_mode.png" />
+      <div id="speed">Speed: None</div>
+      <div id="altitude">Altitude: None</div>
+      <div id="flightMode">None flightMode</div>
+    </div>
+    <script src="./js/scripts.js" type="module"></script>
+  </body>
+</html>

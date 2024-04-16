@@ -1,0 +1,333 @@
+/* стили для адаптивности */
+@media (max-width: 795px) {
+	img {
+		max-width: 25px;
+		height: 25px;
+	}
+}
+
+body {
+	margin: 0; /* Удаляет внешние отступы для body */
+	padding: 0; /* Удаляет внутренние отступы для body */
+}
+
+#map {
+	position: relative;
+	width: 100%;
+	height: calc(100vh - 60px); /* 60px - высота навбара */
+	pointer-events: none;
+}
+
+/* header */
+img {
+	max-width: 100%; /* Устанавливает максимальную ширину для изображений на 100% родительского контейнера */
+	height: 45px; /* Задает фиксированную высоту изображений на 45 пикселей */
+}
+li {
+	list-style-type: none; /* Убираем маркеры */
+	margin: 10px;
+}
+.navbar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	z-index: 1000;
+}
+/* Размер навбара */
+.bg-dark {
+	height: 60px; /* Задает высоту фона навбара на 60 пикселей */
+}
+
+/* Навбар колапс - область внутри навбара, которая хранит в себе текст. */
+.navbar-expand-lg .navbar-collapse {
+	display: flex !important; /* Устанавливает отображение flex для области навбара */
+	height: 60px; /* Задает высоту для области навбара на 60 пикселей */
+	flex-basis: auto; /* Устанавливает начальный размер flex-элемента на автоматическое значение */
+	color: white; /* Устанавливает цвет текста внутри коллапсирующегося навбара на белый */
+}
+
+/* Стиль для сообщения, которое придёт в случае если нету координат. */
+.centered-message {
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: #f2f2f2;
+	padding: 20px;
+	border: 1px solid #ccc;
+}
+
+.nav-link {
+	align-items: center; /* Выравнивание по вертикали - элементы в пункте меню располагаются по вертикали */
+	height: 60px; /* Задает высоту пунктов меню на 60 пикселей */
+}
+.navbar-nav .nav-item {
+	/* Часть навбара с gps_global_int */
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 60px;
+}
+
+.navbar-nav .nav-item img {
+	margin-right: 10px;
+	margin-left: 10px;
+}
+
+#satellites {
+	width: 87.72px;
+}
+#latitude {
+	width: 66.81px;
+}
+#longitude {
+	width: 66.22px;
+}
+#batteryCharge {
+	width: 38.97px;
+}
+#batteryVoltage {
+	width: 39.28px;
+}
+#batteryCurrent {
+	width: 31.05px;
+}
+.map-overlay {
+	position: fixed;
+	top: 70px;
+	right: 10px;
+	width: 300px;
+	height: 150px;
+	max-width: 300px;
+	max-height: 150px;
+	z-index: 999;
+}
+
+.map-overlay-image {
+	position: absolute;
+	top: 0;
+	right: 0;
+	width: 300px;
+	height: 150px;
+}
+
+.marker {
+	transform-origin: center center; /* Указывает точку поворота в центре изображения */
+	transition: transform 0.3s ease; /* Добавляет плавность перехода при изменении свойства transform */
+	transform: rotate(45deg); /* Применяет поворот изображения на 45 градусов */
+}
+.leaflet-marker-icon {
+	pointer-events: none !important;
+}
+
+#azimuth {
+	position: absolute;
+	top: 50%;
+	left: 75%;
+	transform: translate(-50%, -50%);
+	width: 40px;
+	height: 25px;
+	background-color: rgba(0, 0, 0, 0.5);
+	border: 1px solid white;
+	box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-size: 12px;
+	text-align: center;
+	z-index: 1000;
+}
+.container {
+	min-height: 100vh; /* Задает минимальную высоту контейнера на 100% видимой области экрана */
+	display: flex;
+	flex-direction: column;
+}
+.horizon-circle {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+	margin-left: 5px;
+	opacity: 0;
+}
+
+.horizon {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	max-width: 140px;
+	height: 140px;
+	z-index: 999;
+}
+.map-overlay-compass {
+	position: absolute;
+	top: 5px;
+	right: 5px;
+	max-width: 140px;
+	height: 140px;
+	z-index: 999;
+}
+
+.map-overlay-arrow {
+	position: absolute;
+	top: 50%;
+	left: 75%;
+	transform: translate(-50%, -50%);
+	width: 57px;
+	height: 57px;
+	background-image: url('./images/marker.png');
+	background-size: cover;
+	transition: transform 0.3s ease;
+	z-index: 999;
+}
+#white_frame {
+	position: absolute;
+	top: 5px;
+	left: 5px;
+	max-height: 140px;
+	max-width: 140px;
+	width: 140px;
+	height: 140px;
+	z-index: 1999;
+}
+#horizont-line {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 1000;
+	height: 20px;
+	width: 100px;
+	transition: top 0.5s ease-in-out;
+}
+/* update_servo_output_raw */
+.servo_output_raw {
+	position: fixed;
+	bottom: 0px;
+	height: 150px;
+	width: 285px;
+	max-width: 100%; /* Чтобы блок не выходил за пределы экрана */
+	z-index: 1001;
+	overflow: hidden;
+	display: flex;
+	right: 18.3px;
+}
+
+.place_for_update_servo_output_raw {
+	position: fixed;
+	max-height: 150px;
+	max-width: 300px;
+	height: 150px;
+	width: 300px;
+	z-index: 1000;
+	bottom: 0;
+	right: 10px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center; /* Выравнивание по центру по горизонтали */
+	align-items: center; /* Выравнивание по центру по вертикали */
+}
+
+.engine-container {
+	position: relative; /* Относительное позиционирование */
+	display: flex; /* Размещаем дочерние элементы внутри контейнера в строку */
+	justify-content: center; /* Центрируем по горизонтали */
+	align-items: center; /* Центрируем по вертикали */
+	top: 65%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.rear-engine-strip-image {
+	height: 70px; /* Установите высоту для Rear Engine Strip */
+	max-width: 8px; /* Максимальная ширина для Rear Engine Strip */
+	float: left; /* Выравнивание по левому краю */
+}
+
+/* Добавляем анимацию только для маркеров */
+.engine-strip-image {
+	height: 70px; /* Высота Engine Strip при 100% мощности двигателя */
+	max-width: 20px; /* Максимальная ширина для Engine Strip */
+	position: absolute; /* Абсолютное позиционирование */
+	transition: bottom 0.5s ease; /* Продолжительность анимации 0.5 секунды с плавным эффектом */
+}
+
+.engine-container .power-text {
+	position: absolute; /* Абсолютное позиционирование */
+	bottom: -30px; /* Располагаем элементы относительно нижней границы .engine-container */
+	left: 50%; /* Располагаем элементы по центру горизонтально */
+	transform: translateX(
+		-50%
+	); /* Смещаем элементы на половину их ширины влево, чтобы центрировать по горизонтали */
+	color: white; /* Устанавливаем белый цвет текста */
+}
+
+.engine-container .engine-number {
+	position: absolute; /* Абсолютное позиционирование */
+	bottom: 80px; /* Располагаем элементы относительно нижней границы .engine-container */
+	left: 50%; /* Располагаем элементы по центру горизонтально */
+	transform: translateX(
+		-50%
+	); /* Смещаем элементы на половину их ширины влево, чтобы центрировать по горизонтали */
+	color: white; /* Устанавливаем белый цвет текста */
+}
+.place_for_flight_mode {
+	position: fixed;
+	z-index: 1000;
+	bottom: 0;
+	left: 10px;
+	overflow: hidden;
+	display: flex;
+	justify-content: center;
+	align-items: flex-end;
+	max-width: 300px;
+	height: 150px;
+	pointer-events: none;
+}
+
+.place_for_flight_mode img {
+	width: 300px;
+	max-width: 300px;
+	height: 150px;
+	max-height: 150px;
+	position: relative;
+}
+
+#flightMode {
+	position: absolute;
+	width: 100%; /* Растягиваем элемент по ширине блока img */
+	text-align: center;
+	font-size: 16px;
+	color: white;
+	margin-bottom: 14px; /* Добавлен отступ снизу для выравнивания внутри рамки */
+	z-index: 1001;
+}
+
+#altitude {
+	position: absolute;
+	top: 45%; /* Располагаем элемент по середине по вертикали */
+	left: 80%; /* Располагаем элемент по середине по горизонтали */
+	transform: translate(
+		-50%,
+		-50%
+	); /* Сдвигаем элемент на половину его ширины и высоты назад, чтобы центрировать по центру */
+	color: white;
+	width: 150px;
+	height: 50px;
+	z-index: 1002;
+}
+
+#speed {
+	position: absolute;
+	top: 45%; /* Располагаем элемент по середине по вертикали */
+	left: 30%; /* Располагаем элемент по середине по горизонтали */
+	transform: translate(
+		-50%,
+		-50%
+	); /* Сдвигаем элемент на половину его ширины и высоты назад, чтобы центрировать по центру */
+	color: white;
+	width: 130px;
+	height: 50px;
+	z-index: 1002;
+}
