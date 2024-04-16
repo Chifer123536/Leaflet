@@ -1,5 +1,5 @@
 import { getRandom_gps_global_int } from './getRandom.js'
-import { routeCoordinates } from './route.js' // Импортируем координаты из файла route.js
+import { routeCoordinates } from './route.js'
 
 const iconWidth = 50
 const iconHeight = 50
@@ -30,6 +30,69 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 const mapElement = document.getElementById('map')
 const map = L.map(mapElement, mapOptions)
+
+class Subject {
+	constructor() {
+		this.observers = []
+	}
+
+	addObserver(observer) {
+		this.observers.push(observer)
+	}
+
+	removeObserver(observer) {
+		this.observers = this.observers.filter(obs => obs !== observer)
+	}
+
+	notify(data) {
+		this.observers.forEach(observer => {
+			observer.update(data)
+		})
+	}
+}
+
+class Observer {
+	update(data) {
+		// Реализация метода обновления в подклассах
+	}
+}
+
+class GPSData extends Subject {
+	constructor() {
+		super()
+		this.data = {}
+	}
+
+	setData(data) {
+		this.data = data
+		this.notify(data)
+	}
+}
+
+class MapView extends Observer {
+	constructor(map) {
+		super()
+		this.map = map
+		this.routePolyline = null // переменная для хранения полилинии
+	}
+
+	update(data) {
+		// Обновление карты с новыми данными GPS
+		const position = [data.lat, data.lon]
+		this.map.setView(position, this.map.getZoom())
+
+		// Обновление положения полилинии
+		if (this.routePolyline) {
+			this.routePolyline.addLatLng(position)
+		} else {
+			this.routePolyline = L.polyline([], {
+				color: 'purple',
+				weight: 10,
+			}).addTo(this.map)
+			this.routePolyline.addLatLng(position)
+		}
+	}
+}
 
 try {
 	let marker
@@ -97,6 +160,13 @@ try {
 			'none'
 	}
 
+	// Создаем экземпляры субъекта и наблюдателя
+	const gpsData = new GPSData()
+	const mapView = new MapView(map)
+
+	// Добавляем наблюдателя в список подписчиков субъекта
+	gpsData.addObserver(mapView)
+
 	function update_gps_global_int() {
 		const currentCoordinates = routeCoordinates[currentIndex]
 		currentIndex = (currentIndex + 1) % routeCoordinates.length
@@ -128,6 +198,9 @@ try {
 		)
 
 		updateView(randomData)
+
+		//  setData() для уведомления наблюдателей о новых данных
+		gpsData.setData(randomData)
 	}
 
 	update_gps_global_int()
