@@ -12,9 +12,12 @@ body {
 }
 
 #map {
-	position: relative;
-	width: 100%;
-	height: calc(100vh - 60px); /* 60px - высота навбара */
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	width: 50%; /* Занимает половину ширины экрана */
+	height: 50%; /* Занимает половину высоты экрана */
+	z-index: 1; /* Отображается под другими элементами */
 	pointer-events: none;
 }
 
@@ -330,4 +333,41 @@ li {
 	width: 130px;
 	height: 50px;
 	z-index: 1002;
+}
+/* Вид камеры дрона */
+.camera-view {
+	position: fixed;
+	bottom: 0;
+	right: 0;
+	width: 50%; /* Занимает половину ширины экрана */
+	height: 50%; /* Занимает половину высоты экрана */
+	z-index: 1; /* Отображается под другими элементами */
+}
+
+/* Левая верхняя четверть экрана */
+#info-zone1 {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 50%; /* Занимает половину ширины экрана */
+	height: 50%; /* Занимает половину высоты экрана */
+	z-index: 2; /* Отображается поверх карты и видео */
+}
+
+/* Правая верхняя четверть экрана */
+#info-zone2 {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 50%; /* Занимает половину ширины экрана */
+	height: 50%; /* Занимает половину высоты экрана */
+	z-index: 2; /* Отображается поверх карты и видео */
+}
+#map
+	> div.leaflet-pane.leaflet-map-pane
+	> div.leaflet-pane.leaflet-overlay-pane
+	> svg
+	> g
+	> path {
+	pointer-events: none;
 }
