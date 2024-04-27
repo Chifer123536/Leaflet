@@ -97,6 +97,8 @@ class MapView extends Observer {
 try {
 	let marker
 	let currentIndex = 0
+	let lastAltitude = 0 // Переменная для хранения последнего значения высоты
+	let lastSpeed = 0 // Переменная для хранения последнего значения скорости
 
 	function createMarker(position, rotation) {
 		const marker = L.marker(position, {
@@ -130,8 +132,21 @@ try {
 		longitudeElement.textContent = `Longitude: ${parseFloat(data.lon).toFixed(
 			5
 		)}`
-		altitudeElement.textContent = parseFloat(data.alt).toFixed(1)
-		speedElement.textContent = ` ${parseFloat(data.vel).toFixed(1)}m/s`
+
+		animateValue(
+			altitudeElement,
+			lastAltitude, // Используем последнее значение высоты как начальное
+			parseFloat(data.alt),
+			500
+		)
+		animateValue(
+			speedElement,
+			lastSpeed, // Используем последнее значение скорости как начальное
+			parseFloat(data.vel),
+			500,
+			'm/s'
+		)
+
 		satellitesElement.textContent = `Satellites: ${data.satellites_visible}`
 		azimuthElement.textContent = `${parseFloat(data.cog).toFixed(0)}°`
 
@@ -158,6 +173,10 @@ try {
 
 		document.querySelector('.leaflet-control-attribution').style.display =
 			'none'
+
+		// Обновляем последние значения высоты и скорости
+		lastAltitude = parseFloat(data.alt)
+		lastSpeed = parseFloat(data.vel)
 	}
 
 	// Создаем экземпляры субъекта и наблюдателя
@@ -192,7 +211,7 @@ try {
 				5
 			)}, Altitude: ${randomData.alt.toFixed(
 				5
-			)}, Speed: ${randomData.vel.toFixed(1)}, Satellites: ${
+			)}, Speed: ${randomData.vel.toFixed(1)} m/s, Satellites: ${
 				randomData.satellites_visible
 			}, Azimuth: ${randomData.cog.toFixed(0)}`
 		)
@@ -213,4 +232,19 @@ try {
 
 	// Добавляем сообщение в документ
 	document.body.appendChild(message)
+}
+
+// Функция для анимации обновления значений
+function animateValue(element, start, end, duration, unit = '') {
+	let startTimestamp = null
+	const step = timestamp => {
+		if (!startTimestamp) startTimestamp = timestamp
+		const progress = Math.min((timestamp - startTimestamp) / duration, 1)
+		element.textContent =
+			(start + progress * (end - start) || 0).toFixed(1) + unit // Проверяем на NaN и присваиваем 0
+		if (progress < 1) {
+			window.requestAnimationFrame(step)
+		}
+	}
+	window.requestAnimationFrame(step)
 }

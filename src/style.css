@@ -280,35 +280,6 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	flex-direction: column;
 	align-items: center;
 }
-
-#speed-table {
-	position: absolute;
-	color: white;
-	top: 3.5%;
-	left: 30%;
-	transform: translateX(-30%);
-}
-#speed {
-	position: absolute;
-	color: rgb(255, 255, 131);
-	top: 1%;
-	left: 35%;
-	font-size: 35px;
-}
-#altitude-table {
-	position: absolute;
-	color: white;
-	top: 3.5%;
-	left: 60%;
-	transform: translateX(-50%);
-}
-#altitude {
-	position: absolute;
-	color: aqua;
-	top: 1%;
-	left: 65%;
-	font-size: 35px;
-}
 #flightMode {
 	color: rgb(195, 160, 221);
 	font-size: 35px;
@@ -336,7 +307,7 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 /* Общие стили для информационной зоны */
 .info-zone {
 	position: fixed;
-	top: 60px; /* Учитываем высоту навбара */
+	top: 80px; /* Учитываем высоту навбара */
 	left: 0;
 	width: 100%; /* Занимает всю доступную ширину */
 	height: calc(
@@ -353,4 +324,28 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	> g
 	> path {
 	pointer-events: none;
+}
+/* CSS */
+.altitude-speed {
+	position: absolute;
+	height: 280px;
+	width: 1200px;
+	top: 50%;
+	left: 10.7%;
+	transform: translate(-50%, -50%);
+}
+#speed {
+	position: absolute;
+	color: rgb(255, 255, 131);
+	top: 40%;
+	left: 35%;
+	font-size: 35px;
+}
+
+#altitude {
+	position: absolute;
+	color: aqua;
+	top: 40%;
+	left: 100%;
+	font-size: 35px;
 }
