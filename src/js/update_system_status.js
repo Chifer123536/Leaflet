@@ -9,7 +9,7 @@ function update_view_system_status(simulatedData) {
 	batteryChargeElement.textContent = simulatedData.batteryCharge
 	batteryVoltageElement.textContent = simulatedData.batteryVoltage
 	batteryCurrentElement.textContent = simulatedData.batteryCurrent
-	flightModeElement.textContent = `Flight Mode: ${simulatedData.flightMode}`
+	flightModeElement.textContent = simulatedData.flightMode
 }
 
 function update_system_status() {

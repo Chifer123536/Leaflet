@@ -130,8 +130,8 @@ try {
 		longitudeElement.textContent = `Longitude: ${parseFloat(data.lon).toFixed(
 			5
 		)}`
-		altitudeElement.textContent = `Altitude: ${parseFloat(data.alt).toFixed(1)}`
-		speedElement.textContent = `Speed: ${parseFloat(data.vel).toFixed(1)}m/s`
+		altitudeElement.textContent = parseFloat(data.alt).toFixed(1)
+		speedElement.textContent = ` ${parseFloat(data.vel).toFixed(1)}m/s`
 		satellitesElement.textContent = `Satellites: ${data.satellites_visible}`
 		azimuthElement.textContent = `${parseFloat(data.cog).toFixed(0)}°`
 

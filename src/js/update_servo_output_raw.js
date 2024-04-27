@@ -1,5 +1,4 @@
 import { getRandom_servo_output_raw } from './getRandom.js'
-
 ;(function () {
 	try {
 		const engineMarkers = {} // Объект для хранения маркеров двигателей
@@ -78,18 +77,25 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 			)
 			const engineImage = engineStrip.querySelector('.engine-strip-image')
 			const powerText = engineStrip.querySelector('.power-text')
-			const newBottom = Math.min(100, Math.max(0, enginePower))
+
+			// Высота полоски
+			const stripHeight = engineStrip.offsetHeight
+
+			// Новое значение bottom для engineImage
+			const newBottom =
+				(enginePower / 100) * (stripHeight - engineImage.offsetHeight)
 
 			animateMarker(rearEngineImage, newBottom)
 			animateMarker(engineImage, newBottom)
 
-			powerText.textContent = `${newBottom.toFixed(0)}%`
+			powerText.textContent = `${enginePower.toFixed(0)}%`
 		}
 
 		// Функция для обновления показаний двигателей
 		function updateServoOutputRaw() {
 			const enginePowerValues = getRandom_servo_output_raw()
-			const servoOutputRawElement = document.querySelector('.servo_output_raw')
+			const servoOutputRawContainer =
+				document.querySelector('.servo_output_raw')
 
 			const engineData = []
 
@@ -106,7 +112,8 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 						index * 100,
 						index + 1
 					)
-					servoOutputRawElement.appendChild(engineStrip)
+					// Изменяем точку вставки на контейнер servo_output_raw
+					servoOutputRawContainer.appendChild(engineStrip)
 					engineMarkers[engineId] = engineStrip
 				}
 
