@@ -120,7 +120,7 @@ try {
 		return degreeAngle >= 0 ? degreeAngle : 360 + degreeAngle
 	}
 
-	function updateView(data) {
+	function updateView(data, maxAltitude, maxSpeed) {
 		const latitudeElement = document.getElementById('latitude')
 		const longitudeElement = document.getElementById('longitude')
 		const altitudeElement = document.getElementById('altitude')
@@ -143,8 +143,7 @@ try {
 			speedElement,
 			lastSpeed, // Используем последнее значение скорости как начальное
 			parseFloat(data.vel),
-			500,
-			'm/s'
+			500
 		)
 
 		satellitesElement.textContent = `Satellites: ${data.satellites_visible}`
@@ -164,7 +163,11 @@ try {
 			map.removeLayer(marker)
 		}
 
+		// Добавляем вызов функции createMarker
 		marker = createMarker(position, parseFloat(data.cog).toFixed(0))
+
+		// После добавления маркера на карту убедитесь, что вы его отображаете
+		marker.addTo(map)
 
 		const arrowMarker = document.querySelector('.map-overlay-arrow')
 		arrowMarker.style.transform = `translate(-50%, -50%) rotate(${parseFloat(
