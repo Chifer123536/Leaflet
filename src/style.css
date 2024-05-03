@@ -112,19 +112,11 @@ li {
 	top: 60%;
 	left: 22%;
 	transform: translate(-50%, -50%);
-	width: 600px; /* или нужная вам ширина */
+	width: 800px; /* или нужная вам ширина */
 	height: 300px; /* или нужная вам высота */
 	max-width: 100%; /* чтобы не выходило за границы .info-zone */
 	max-height: 100%; /* чтобы не выходило за границы .info-zone */
 	z-index: 999; /* или любое другое подходящее значение */
-}
-
-.map-overlay-image {
-	position: absolute;
-	top: 0;
-	right: 0;
-	width: 300px;
-	height: 150px;
 }
 
 .marker {
@@ -136,10 +128,66 @@ li {
 	pointer-events: none !important;
 }
 
+.horizon {
+	position: absolute;
+	width: 280px;
+	height: 280px;
+	left: 14%;
+}
+body > div.info-zone > div.map-overlay > div.horizon > canvas {
+	position: absolute;
+	width: 280px;
+	height: 280px;
+	max-width: 280px;
+	max-height: 280px;
+	z-index: 999;
+}
+#white_frame {
+	position: absolute;
+	width: 280px;
+	height: 280px;
+	z-index: 1000;
+	pointer-events: none;
+	left: 14%;
+}
+#horizont-line {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 1000;
+	height: 40px;
+	width: 200px;
+	transition: transform 0.5s ease;
+}
+.compass {
+	position: absolute;
+	width: 280px;
+	height: 280px;
+	right: 14%;
+}
+.map-overlay-compass {
+	position: absolute;
+	top: 0px;
+	width: 280px;
+	height: 280px;
+	z-index: 999;
+}
+.map-overlay-arrow {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 114px;
+	height: 114px;
+	background-image: url('./images/marker.png');
+	background-size: cover;
+	transition: transform 0.3s ease;
+	z-index: 999;
+}
 #azimuth {
 	position: absolute;
 	top: 50%;
-	left: 76%;
+	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 80px;
 	height: 50px;
@@ -154,68 +202,6 @@ li {
 	text-align: center;
 	z-index: 1000;
 	pointer-events: none;
-}
-.container {
-	min-height: 100vh; /* Задает минимальную высоту контейнера на 100% видимой области экрана */
-	display: flex;
-	flex-direction: column;
-}
-
-.horizon {
-	position: relative;
-	width: 280px;
-	height: 280px;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-}
-
-body > div.info-zone > div.map-overlay > div.horizon > canvas {
-	position: absolute;
-	width: 280px;
-	height: 280px;
-	max-width: 280px;
-	max-height: 280px;
-	z-index: 999;
-}
-.map-overlay-compass {
-	position: absolute;
-	top: 0px;
-	right: 5px;
-	width: 280px;
-	height: 280px;
-	z-index: 999;
-}
-
-.map-overlay-arrow {
-	position: absolute;
-	top: 50%;
-	left: 76%;
-	transform: translate(-50%, -50%);
-	width: 114px;
-	height: 114px;
-	background-image: url('./images/marker.png');
-	background-size: cover;
-	transition: transform 0.3s ease;
-	z-index: 999;
-}
-#white_frame {
-	position: absolute;
-	width: 280px;
-	height: 280px;
-	z-index: 2999;
-	pointer-events: none;
-}
-#horizont-line {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	z-index: 1000;
-	height: 40px;
-	width: 200px;
-	transition: top 0.5s ease-in-out;
-	transition: transform 0.5s ease;
 }
 /* update_servo_output_raw */
 .servo_output_raw {
@@ -348,7 +334,7 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	top: 0%;
 	left: 0%;
 	width: 150px;
-	height: 350px;
+	height: 280px;
 }
 #speed {
 	position: absolute;
@@ -364,7 +350,7 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	top: 0%;
 	right: 0%;
 	width: 150px;
-	height: 350px;
+	height: 280px;
 }
 #altitude {
 	position: absolute;
@@ -376,9 +362,8 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 }
 .altitude-speed {
 	position: absolute;
-	height: 280px;
-	width: 838px;
-	top: 21%;
+	height: 300px;
+	width: 800px;
 	left: 0%;
 	display: flex;
 	justify-content: space-between;

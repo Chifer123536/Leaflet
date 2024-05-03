@@ -17,7 +17,7 @@ import { getRandom_attitude } from './getRandom.js'
 
 	// Функция для создания сферы
 	function createSphere() {
-		const radius = 2 // Увеличиваем радиус сферы в 2 раза
+		const radius = 2.01
 		const widthSegments = 50
 		const heightSegments = 50
 
