@@ -336,14 +336,6 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	width: 150px;
 	height: 280px;
 }
-#speed {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-70%, -50%);
-	font-size: 35px;
-	color: rgb(255, 255, 131);
-}
 .place_for_altitude {
 	position: absolute;
 	height: auto;
@@ -386,4 +378,46 @@ img[src='./images/right-background_for_speed-altitude.png'] {
 	width: 110px;
 	height: 45.42px;
 	right: 0;
+}
+.speed-offset {
+	width: 100%;
+	text-align: center;
+	font-size: 22px;
+	transform: translate(-15%, -20%);
+}
+#speed {
+	position: absolute;
+	top: 50%;
+	transform: translate(-15%, -50%);
+	font-size: 35px;
+	color: rgb(255, 255, 131);
+}
+
+#speed-plus-10 {
+	position: absolute;
+	font-size: 35px;
+	color: rgb(255, 255, 255);
+	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+	top: 5%;
+}
+#speed-plus-5 {
+	position: absolute;
+	font-size: 35px;
+	color: rgb(255, 255, 255);
+	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+	top: 27.5%;
+}
+#speed-minus-5 {
+	position: absolute;
+	font-size: 35px;
+	color: rgb(255, 255, 255);
+	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+	top: 60%;
+}
+#speed-minus-10 {
+	position: absolute;
+	font-size: 35px;
+	color: rgb(255, 255, 255);
+	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
+	top: 83%;
 }

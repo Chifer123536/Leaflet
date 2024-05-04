@@ -120,7 +120,7 @@ try {
 		return degreeAngle >= 0 ? degreeAngle : 360 + degreeAngle
 	}
 
-	function updateView(data, maxAltitude, maxSpeed) {
+	function updateView(data) {
 		const latitudeElement = document.getElementById('latitude')
 		const longitudeElement = document.getElementById('longitude')
 		const altitudeElement = document.getElementById('altitude')
@@ -128,26 +128,54 @@ try {
 		const satellitesElement = document.getElementById('satellites')
 		const azimuthElement = document.getElementById('azimuth')
 
-		latitudeElement.textContent = `Latitude: ${parseFloat(data.lat).toFixed(5)}`
-		longitudeElement.textContent = `Longitude: ${parseFloat(data.lon).toFixed(
-			5
+		latitudeElement.textContent = `Latitude: ${Math.round(
+			parseFloat(data.lat)
+		)}`
+		longitudeElement.textContent = `Longitude: ${Math.round(
+			parseFloat(data.lon)
 		)}`
 
 		animateValue(
 			altitudeElement,
 			lastAltitude, // Используем последнее значение высоты как начальное
-			parseFloat(data.alt),
+			Math.round(parseFloat(data.alt)),
 			500
 		)
 		animateValue(
 			speedElement,
 			lastSpeed, // Используем последнее значение скорости как начальное
-			parseFloat(data.vel),
+			Math.round(parseFloat(data.vel)),
+			500
+		)
+
+		// Обновляем значения скорости для каждого контейнера (-10, -5, +5, +10)
+		animateValue(
+			document.getElementById('speed-minus-10'),
+			Math.round(lastSpeed - 10),
+			Math.round(parseFloat(data.vel) - 10),
+			500
+		)
+		animateValue(
+			document.getElementById('speed-minus-5'),
+			Math.round(lastSpeed - 5),
+			Math.round(parseFloat(data.vel) - 5),
+			500
+		)
+		animateValue(
+			document.getElementById('speed-plus-5'),
+			Math.round(lastSpeed + 5),
+			Math.round(parseFloat(data.vel) + 5),
+			500
+		)
+		animateValue(
+			document.getElementById('speed-plus-10'),
+			Math.round(lastSpeed + 10),
+			Math.round(parseFloat(data.vel) + 10),
 			500
 		)
 
 		satellitesElement.textContent = `Satellites: ${data.satellites_visible}`
-		azimuthElement.textContent = `${parseFloat(data.cog).toFixed(0)}°`
+		azimuthElement.textContent = `${Math.round(parseFloat(data.cog))}°`
 
 		const position = [data.lat, data.lon]
 
@@ -170,16 +198,16 @@ try {
 		marker.addTo(map)
 
 		const arrowMarker = document.querySelector('.map-overlay-arrow')
-		arrowMarker.style.transform = `translate(-50%, -50%) rotate(${parseFloat(
-			data.cog
-		).toFixed(0)}deg)`
+		arrowMarker.style.transform = `translate(-50%, -50%) rotate(${Math.round(
+			parseFloat(data.cog)
+		)}deg)`
 
 		document.querySelector('.leaflet-control-attribution').style.display =
 			'none'
 
 		// Обновляем последние значения высоты и скорости
-		lastAltitude = parseFloat(data.alt)
-		lastSpeed = parseFloat(data.vel)
+		lastAltitude = Math.round(parseFloat(data.alt))
+		lastSpeed = Math.round(parseFloat(data.vel))
 	}
 
 	// Создаем экземпляры субъекта и наблюдателя
@@ -244,7 +272,7 @@ function animateValue(element, start, end, duration, unit = '') {
 		if (!startTimestamp) startTimestamp = timestamp
 		const progress = Math.min((timestamp - startTimestamp) / duration, 1)
 		element.textContent =
-			(start + progress * (end - start) || 0).toFixed(1) + unit // Проверяем на NaN и присваиваем 0
+			(start + progress * (end - start) || 0).toFixed(0) + unit // Изменено на toFixed(0)
 		if (progress < 1) {
 			window.requestAnimationFrame(step)
 		}

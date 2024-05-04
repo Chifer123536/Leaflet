@@ -99,7 +99,7 @@ function getRandomCoordinate() {
 }
 
 function getRandomAltitude() {
-	return Math.random() * 1000 // Возвращает случайное значение для alt в диапазоне от 0 до 1000
+	return Math.floor(Math.random() * 1000)
 }
 
 function getRandomEph() {
@@ -111,7 +111,7 @@ function getRandomEpv() {
 }
 
 function getRandomVel() {
-	return Math.random() * 100 // Возвращает случайное значение для vel в диапазоне от 0 до 100
+	return Math.floor(Math.random() * 100)
 }
 
 export function getRandomCog() {
