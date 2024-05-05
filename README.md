@@ -6,7 +6,7 @@
 
 1. Склонируйте репозиторий:
 
-   git clone https://github.com/Chifer123536/leafletGps.git
+   git clone https://github.com/Chifer123536
 
 2. Скачайте Node.js с официального сайта, если вы на windows.
 
