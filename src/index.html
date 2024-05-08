@@ -72,21 +72,18 @@
 				<div class="altitude-speed">
 					<div class="place_for_speed" id="indicator">
 						<img src="./images/left-background_for_speed-altitude.png" />
-						<div class="speed-offset" id="speed-plus-10"></div>
-						<div class="speed-offset" id="speed-plus-5"></div>
-						<div id="speed" class="speed-offset"></div>
-						<div class="speed-offset" id="speed-minus-5"></div>
-						<div class="speed-offset" id="speed-minus-10"></div>
+						<div id="speed">None</div>
 					</div>
-
 					<div class="place_for_altitude" id="indicator">
 						<img src="./images/right-background_for_speed-altitude.png" />
-						<div id="altitude"></div>
+						<div id="altitude">None</div>
 					</div>
 				</div>
 
 				<img src="./images/white_frame.png" alt="" id="white_frame" />
-				<div class="horizon"></div>
+				<div class="horizon">
+					<canvas id="horizon-canvas"></canvas>
+				</div>
 			</div>
 
 			<div class="servo_output_raw"></div>

@@ -1,9 +1,8 @@
 import { getRandom_servo_output_raw } from './getRandom.js'
 ;(function () {
 	try {
-		const engineMarkers = {} // Объект для хранения маркеров двигателей
+		const engineMarkers = {}
 
-		// Функция для создания элемента полоски двигателя
 		function createEngineStrip(id, width, height, top, engineNumber) {
 			const engineStrip = document.createElement('li')
 			engineStrip.classList.add('engine-strip')
@@ -45,7 +44,6 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 			return engineStrip
 		}
 
-		// Функция для анимации перемещения маркера
 		function animateMarker(marker, newBottom) {
 			const duration = 500
 			const start = marker.style.bottom ? parseFloat(marker.style.bottom) : 0
@@ -70,7 +68,6 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 			requestAnimationFrame(step)
 		}
 
-		// Функция для обновления полоски двигателя
 		function updateEngineStrip(engineStrip, enginePower) {
 			const rearEngineImage = engineStrip.querySelector(
 				'.rear-engine-strip-image'
@@ -78,10 +75,8 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 			const engineImage = engineStrip.querySelector('.engine-strip-image')
 			const powerText = engineStrip.querySelector('.power-text')
 
-			// Высота полоски
 			const stripHeight = engineStrip.offsetHeight
 
-			// Новое значение bottom для engineImage
 			const newBottom =
 				(enginePower / 100) * (stripHeight - engineImage.offsetHeight)
 
@@ -91,7 +86,6 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 			powerText.textContent = `${enginePower.toFixed(0)}%`
 		}
 
-		// Функция для обновления показаний двигателей
 		function updateServoOutputRaw() {
 			const enginePowerValues = getRandom_servo_output_raw()
 			const servoOutputRawContainer =
@@ -112,7 +106,6 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 						index * 100,
 						index + 1
 					)
-					// Изменяем точку вставки на контейнер servo_output_raw
 					servoOutputRawContainer.appendChild(engineStrip)
 					engineMarkers[engineId] = engineStrip
 				}
@@ -124,7 +117,6 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 			console.log(engineData.join(', '))
 		}
 
-		// Инициализация
 		function init() {
 			updateServoOutputRaw()
 			setInterval(updateServoOutputRaw, 2000)

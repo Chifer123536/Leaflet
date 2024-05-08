@@ -1,25 +1,37 @@
+* {
+	pointer-events: none !important ;
+}
 body {
-	margin: 0; /* Удаляет внешние отступы для body */
-	padding: 0; /* Удаляет внутренние отступы для body */
+	margin: 0;
+	padding: 0;
 }
 
 #map {
 	position: fixed;
 	bottom: 0;
 	left: 0;
-	width: 50%; /* Занимает половину ширины экрана */
-	height: 50%; /* Занимает половину высоты экрана */
-	z-index: 1; /* Отображается под другими элементами */
-	pointer-events: none;
+	width: 50%;
+	height: 50%;
+	z-index: 1;
+}
+.centered-message {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background: #f2f2f2;
+	padding: 20px;
+	border: 1px solid #ccc;
+	z-index: 2000;
+	font-size: 35px;
 }
 
-/* header */
 img {
-	max-width: 100%; /* Устанавливает максимальную ширину для изображений на 100% родительского контейнера */
-	height: 67.5; /* Задает фиксированную высоту изображений на 45 пикселей */
+	max-width: 100%;
+	height: 67.5;
 }
 li {
-	list-style-type: none; /* Убираем маркеры */
+	list-style-type: none;
 	margin: 10px;
 }
 .navbar {
@@ -28,12 +40,12 @@ li {
 	left: 0;
 	width: 100%;
 	z-index: 1000;
-	text-align: center; /* Центрируем текст внутри навбара */
+	text-align: center;
 }
 
 .bg-dark {
 	height: 80px;
-	background-color: #343a40; /* Цвет навбара */
+	background-color: #343a40;
 }
 
 .navbar-expand-lg .navbar-collapse {
@@ -41,23 +53,12 @@ li {
 	height: 80px;
 	flex-basis: auto;
 	color: white;
-	justify-content: center; /* Центрируем элементы навбара по горизонтали */
-}
-
-/* Стиль для сообщения, которое придёт в случае если нету координат. */
-.centered-message {
-	position: fixed;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
-	background: #f2f2f2;
-	padding: 20px;
-	border: 1px solid #ccc;
+	justify-content: center;
 }
 
 .nav-link {
-	align-items: center; /* Выравнивание по вертикали - элементы в пункте меню располагаются по вертикали */
-	height: 80px; /* Задает высоту пунктов меню на 60 пикселей */
+	align-items: center;
+	height: 80px;
 }
 .navbar-nav .nav-item {
 	display: flex;
@@ -72,7 +73,7 @@ li {
 }
 .navbar-nav .nav-item,
 .navbar-nav .nav-link {
-	font-size: 1.8em !important; /* Увеличиваем размер шрифта в 1.5 раза */
+	font-size: 1.8em !important;
 	width: 400px !important;
 }
 #satellite-icon {
@@ -112,20 +113,17 @@ li {
 	top: 60%;
 	left: 22%;
 	transform: translate(-50%, -50%);
-	width: 800px; /* или нужная вам ширина */
-	height: 300px; /* или нужная вам высота */
-	max-width: 100%; /* чтобы не выходило за границы .info-zone */
-	max-height: 100%; /* чтобы не выходило за границы .info-zone */
-	z-index: 999; /* или любое другое подходящее значение */
+	width: 800px;
+	height: 300px;
+	max-width: 100%;
+	max-height: 100%;
+	z-index: 999;
 }
 
 .marker {
-	transform-origin: center center; /* Указывает точку поворота в центре изображения */
-	transition: transform 0.3s ease; /* Добавляет плавность перехода при изменении свойства transform */
-	transform: rotate(45deg); /* Применяет поворот изображения на 45 градусов */
-}
-.leaflet-marker-icon {
-	pointer-events: none !important;
+	transform-origin: center center;
+	transition: transform 0.3s ease;
+	transform: rotate(45deg);
 }
 
 .horizon {
@@ -147,17 +145,17 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	width: 280px;
 	height: 280px;
 	z-index: 1000;
-	pointer-events: none;
 	left: 14%;
 }
 #horizont-line {
 	position: absolute;
-	top: 50%;
+	top: 53%;
 	left: 50%;
 	z-index: 1000;
 	height: 40px;
 	width: 200px;
 	transition: transform 0.5s ease;
+	transform: translate(-50%, -50%);
 }
 .compass {
 	position: absolute;
@@ -201,23 +199,19 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	font-size: 36px;
 	text-align: center;
 	z-index: 1000;
-	pointer-events: none;
 }
-/* update_servo_output_raw */
+
 .servo_output_raw {
 	position: absolute;
 	left: 75%;
 	top: 50%;
-	height: 280px; /* Увеличиваем высоту блока в 1.5 раза */
+	height: 280px;
 	width: 1000px;
 	overflow: hidden;
 	display: flex;
 	justify-content: space-evenly;
-	align-items: center; /* Центрирование содержимого по вертикали */
-	transform: translate(
-		-50%,
-		-50%
-	); /* Центрирование блока по вертикали и горизонтали */
+	align-items: center;
+	transform: translate(-50%, -50%);
 	z-index: 1002;
 }
 .engine-container {
@@ -232,35 +226,34 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 }
 
 .rear-engine-strip-image {
-	height: 100px !important; /* Увеличиваем высоту изображения в полтора раза */
-	width: 12px !important; /* Максимальная ширина изображения rear-engine-strip-image */
-	float: left; /* Выравнивание по левому краю */
+	height: 100px !important;
+	width: 12px !important;
+	float: left;
 }
-/* Добавляем анимацию только для маркеров */
 .engine-strip-image {
 	height: 9px !important;
-	width: 30px !important; /* Максимальная ширина для Engine Strip */
-	position: absolute; /* Абсолютное позиционирование */
-	transition: bottom 0.5s ease; /* Продолжительность анимации 0.5 секунды с плавным эффектом */
+	width: 30px !important;
+	position: absolute;
+	transition: bottom 0.5s ease;
 }
 
 .engine-container .power-text {
-	position: absolute; /* Абсолютное позиционирование */
-	bottom: -90px; /* Располагаем элементы относительно нижней границы .engine-container */
-	left: 50%; /* Располагаем элементы по центру горизонтально */
+	position: absolute;
+	bottom: -90px;
+	left: 50%;
 	transform: translateX(-50%);
-	color: white; /* Устанавливаем белый цвет текста */
-	line-height: 1.5; /* Добавим интерлиньяж в 1.5 раза размера шрифта */
-	font-size: 54px; /* Увеличиваем размер шрифта в 1.5 раза */
+	color: white;
+	line-height: 1.5;
+	font-size: 54px;
 }
 
 .engine-container .engine-number {
-	position: absolute; /* Абсолютное позиционирование */
-	bottom: 110px; /* Располагаем элементы относительно нижней границы .engine-container */
-	left: 50%; /* Располагаем элементы по центру горизонтально */
+	position: absolute;
+	bottom: 110px;
+	left: 50%;
 	transform: translateX(-50%);
-	color: white; /* Устанавливаем белый цвет текста */
-	font-size: 54px; /* Увеличиваем размер шрифта в 1.5 раза */
+	color: white;
+	font-size: 54px;
 }
 
 .place_for_flight_mode {
@@ -284,47 +277,34 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	position: fixed;
 	bottom: 0;
 	right: 0;
-	width: 50%; /* Занимает половину ширины экрана */
-	height: 50%; /* Занимает половину высоты экрана */
-	background-color: black; /* Закрашиваем область чёрным цветом */
+	width: 50%;
+	height: 50%;
+	background-color: black;
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 1; /* Отображается под другими элементами */
+	z-index: 1;
 }
 
 .camera-text {
 	color: white;
 	font-size: 36px;
-	pointer-events: none;
 }
 
-/* Общие стили для информационной зоны */
 .info-zone {
 	position: fixed;
-	top: 80px; /* Учитываем высоту навбара */
+	top: 80px;
 	left: 0;
-	width: 100%; /* Занимает всю доступную ширину */
-	height: calc(
-		50% - 60px
-	); /* Занимает половину высоты экрана, вычитая высоту навбара */
-	z-index: 2; /* Отображается поверх карты и видео */
-	background-color: #191c1f; /* Цвет навбара */
-}
-
-#map
-	> div.leaflet-pane.leaflet-map-pane
-	> div.leaflet-pane.leaflet-overlay-pane
-	> svg
-	> g
-	> path {
-	pointer-events: none;
+	width: 100%;
+	height: calc(50% - 60px);
+	z-index: 2;
+	background-color: #191c1f;
 }
 
 #indicator {
-	position: absolute; /* Фиксированное позиционирование */
-	border: 2px solid white; /* Добавляем белый контур */
-	z-index: 999; /* Оставляем таким же */
+	position: absolute;
+	border: 2px solid white;
+	z-index: 999;
 	background-color: rgba(255, 255, 255, 0.1);
 	width: 110px;
 }
@@ -335,6 +315,16 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 	left: 0%;
 	width: 150px;
 	height: 280px;
+}
+#speed {
+	position: absolute;
+	top: 50%;
+	left: 40%;
+	transform: translate(-50%, -50%);
+	font-size: 45px;
+	color: rgb(255, 255, 131);
+	z-index: 1004;
+	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 .place_for_altitude {
 	position: absolute;
@@ -347,10 +337,12 @@ body > div.info-zone > div.map-overlay > div.horizon > canvas {
 #altitude {
 	position: absolute;
 	top: 50%;
-	left: 50%;
-	transform: translate(-45%, -50%);
-	font-size: 34px;
-	color: rgba(0, 255, 255); /* Цвет текста altitude */
+	left: 55%;
+	transform: translate(-50%, -50%);
+	font-size: 45px;
+	color: rgba(0, 255, 255);
+	z-index: 1004;
+	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
 }
 .altitude-speed {
 	position: absolute;
@@ -369,55 +361,13 @@ img[src='./images/left-background_for_speed-altitude.png'] {
 	transform: translate(-50%, -50%);
 	width: 110px;
 	height: 45.42px;
+	z-index: 1003;
 }
 img[src='./images/right-background_for_speed-altitude.png'] {
 	position: absolute;
-	top: 50.6%;
+	top: 50%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 110px;
 	height: 45.42px;
-	right: 0;
-}
-.speed-offset {
-	width: 100%;
-	text-align: center;
-	font-size: 22px;
-	transform: translate(-15%, -20%);
-}
-#speed {
-	position: absolute;
-	top: 50%;
-	transform: translate(-15%, -50%);
-	font-size: 35px;
-	color: rgb(255, 255, 131);
-}
-
-#speed-plus-10 {
-	position: absolute;
-	font-size: 35px;
-	color: rgb(255, 255, 255);
-	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-	top: 5%;
-}
-#speed-plus-5 {
-	position: absolute;
-	font-size: 35px;
-	color: rgb(255, 255, 255);
-	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-	top: 27.5%;
-}
-#speed-minus-5 {
-	position: absolute;
-	font-size: 35px;
-	color: rgb(255, 255, 255);
-	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-	top: 60%;
-}
-#speed-minus-10 {
-	position: absolute;
-	font-size: 35px;
-	color: rgb(255, 255, 255);
-	text-shadow: 0 0 5px rgba(0, 0, 0, 1);
-	top: 83%;
 }

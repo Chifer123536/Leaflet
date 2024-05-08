@@ -1,191 +1,165 @@
 import { getRandom_attitude } from './getRandom.js'
-;(function () {
-	// Объявление переменных для сцены, камеры, рендерера, объекта, изображения горизонта и таймера аттитюда
-	let scene, camera, renderer, sphere, horizonImage
-	let attitudeTimer
 
-	// Начальные углы крена, тангажа и рыскания
-	let roll = 0
-	let pitch = 0
-	let yaw = 0
+let scene, camera, renderer, sphere, horizonImage
+let attitudeTimer
 
-	// Элемент горизонта
-	let horizon
+let roll = 0
+let pitch = 0
+let yaw = 0
 
-	// Смещение текстуры по горизонтали
-	let textureOffsetX = 0.5
+let horizon
 
-	// Функция для создания сферы
-	function createSphere() {
-		const radius = 2.01
-		const widthSegments = 50
-		const heightSegments = 50
+let textureOffsetX = 0.5
 
-		const geometry = new THREE.BufferGeometry()
+function createSphere() {
+	const radius = 2.01
+	const widthSegments = 50
+	const heightSegments = 50
 
-		const vertices = []
-		const indices = []
-		const uvs = []
+	const geometry = new THREE.BufferGeometry()
 
-		// Создание сферической геометрии
-		for (let y = 0; y <= heightSegments; y++) {
-			for (let x = 0; x <= widthSegments; x++) {
-				const u = x / widthSegments
-				const v = y / heightSegments
-				const phi = u * Math.PI * 2
-				const theta = v * Math.PI
+	const vertices = []
+	const indices = []
+	const uvs = []
 
-				const vertex = new THREE.Vector3()
-				vertex.x = -radius * Math.cos(phi) * Math.sin(theta)
-				vertex.y = radius * Math.cos(theta)
-				vertex.z = radius * Math.sin(phi) * Math.sin(theta)
+	for (let y = 0; y <= heightSegments; y++) {
+		for (let x = 0; x <= widthSegments; x++) {
+			const u = x / widthSegments
+			const v = y / heightSegments
+			const phi = u * Math.PI * 2
+			const theta = v * Math.PI
 
-				vertices.push(vertex.x, vertex.y, vertex.z)
-				uvs.push(u, 1 - v) // Используем сферические координаты для текстуры
-			}
+			const vertex = new THREE.Vector3()
+			vertex.x = -radius * Math.cos(phi) * Math.sin(theta)
+			vertex.y = radius * Math.cos(theta)
+			vertex.z = radius * Math.sin(phi) * Math.sin(theta)
+
+			vertices.push(vertex.x, vertex.y, vertex.z)
+			uvs.push(u, 1 - v)
 		}
+	}
 
-		// Создание индексов для рендеринга
-		for (let y = 0; y < heightSegments; y++) {
-			for (let x = 0; x < widthSegments; x++) {
-				const a = x + (widthSegments + 1) * y
-				const b = x + (widthSegments + 1) * (y + 1)
-				const c = x + 1 + (widthSegments + 1) * (y + 1)
-				const d = x + 1 + (widthSegments + 1) * y
+	for (let y = 0; y < heightSegments; y++) {
+		for (let x = 0; x < widthSegments; x++) {
+			const a = x + (widthSegments + 1) * y
+			const b = x + (widthSegments + 1) * (y + 1)
+			const c = x + 1 + (widthSegments + 1) * (y + 1)
+			const d = x + 1 + (widthSegments + 1) * y
 
-				indices.push(a, b, d)
-				indices.push(b, c, d)
-			}
+			indices.push(a, b, d)
+			indices.push(b, c, d)
 		}
-
-		geometry.setIndex(indices)
-		geometry.setAttribute(
-			'position',
-			new THREE.Float32BufferAttribute(vertices, 3)
-		)
-		geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
-
-		const textureLoader = new THREE.TextureLoader()
-		textureLoader.load('./images/texture.png', function (loadedTexture) {
-			// Установка тайлинга для текстуры только по горизонтали
-			loadedTexture.wrapS = THREE.RepeatWrapping
-			loadedTexture.repeat.set(4, 1) // Устанавливаем тайлинг по горизонтали 4 раза
-
-			// Установка фильтрации текстуры для сглаживания
-			loadedTexture.magFilter = THREE.NearestMipmapLinearFilter // Устанавливаем более качественный фильтр
-			loadedTexture.minFilter = THREE.NearestMipmapLinearFilter
-
-			// Установка анизотропной фильтрации для сглаживания текстуры
-			loadedTexture.anisotropy = renderer.capabilities.getMaxAnisotropy()
-
-			const material = new THREE.MeshBasicMaterial({ map: loadedTexture })
-			sphere = new THREE.Mesh(geometry, material)
-
-			scene.add(sphere)
-
-			// Запуск анимации после загрузки текстуры
-			animate()
-		})
 	}
 
-	// Функция для создания изображения горизонта
-	function createHorizonImage() {
-		const horizonContainer = document.querySelector('.horizon')
-		horizonImage = document.createElement('img')
-		horizonImage.src = './images/line.png'
-		horizonImage.id = 'horizont-line'
-		horizonImage.classList.add('horizon-image')
-		horizonImage.width = horizonContainer.clientWidth
-		horizonImage.height = horizonContainer.clientHeight
-		horizonContainer.appendChild(horizonImage)
-		horizon = document.getElementById('horizont-line')
-	}
+	geometry.setIndex(indices)
+	geometry.setAttribute(
+		'position',
+		new THREE.Float32BufferAttribute(vertices, 3)
+	)
+	geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
 
-	// Функция для обновления углов аттитюда
-	function update_attitude(newRoll, newPitch, newYaw) {
-		roll = newRoll
-		pitch = newPitch
-		yaw = newYaw
+	const textureLoader = new THREE.TextureLoader()
+	textureLoader.load('./images/texture.png', function (loadedTexture) {
+		loadedTexture.wrapS = THREE.RepeatWrapping
+		loadedTexture.repeat.set(4, 1)
+		loadedTexture.magFilter = THREE.NearestMipmapLinearFilter
+		loadedTexture.minFilter = THREE.NearestMipmapLinearFilter
+		loadedTexture.anisotropy = renderer.capabilities.getMaxAnisotropy()
 
-		console.log(
-			`Roll: ${roll.toFixed(2)}, Pitch: ${pitch.toFixed(2)}, Yaw: ${yaw.toFixed(
-				2
-			)}`
-		)
-	}
+		const material = new THREE.MeshBasicMaterial({ map: loadedTexture })
+		sphere = new THREE.Mesh(geometry, material)
 
-	// Функция для запуска таймера аттитюда
-	function startAttitudeTimer() {
-		attitudeTimer = setInterval(function () {
-			const randomData = getRandom_attitude()
-			const {
-				roll: targetRoll,
-				pitch: targetPitch,
-				yaw: targetYaw,
-			} = randomData
+		scene.add(sphere)
 
-			update_attitude(targetRoll, targetPitch, targetYaw)
-			updateHorizon(targetRoll, targetPitch)
-		}, 2000)
-	}
+		animate()
+	})
+}
 
-	// Функция для инициализации сцены
-	function init() {
-		scene = new THREE.Scene()
-		const horizonContainer = document.querySelector('.horizon')
-		const width = horizonContainer.clientWidth
-		const height = horizonContainer.clientHeight
-		const aspectRatio = width / height
-		const fov = 48
-		const near = 0.1
-		const far = 1000
+function createHorizonImage() {
+	const horizonContainer = document.querySelector('.horizon')
+	horizonImage = document.createElement('img')
+	horizonImage.src = './images/line.png'
+	horizonImage.id = 'horizont-line'
+	horizonImage.classList.add('horizon-image')
+	horizonImage.width = horizonContainer.clientWidth
+	horizonImage.height = horizonContainer.clientHeight
+	horizonContainer.appendChild(horizonImage)
+	horizon = document.getElementById('horizont-line')
+}
 
-		camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far)
-		camera.position.z = 5
+function update_attitude(newRoll, newPitch, newYaw) {
+	roll = newRoll
+	pitch = newPitch
+	yaw = newYaw
 
-		renderer = new THREE.WebGLRenderer({ alpha: true })
-		renderer.setSize(width, height)
+	console.log(
+		`Roll: ${roll.toFixed(2)}, Pitch: ${pitch.toFixed(2)}, Yaw: ${yaw.toFixed(
+			2
+		)}`
+	)
+}
 
-		horizonContainer.innerHTML = ''
-		horizonContainer.appendChild(renderer.domElement)
+function startAttitudeTimer() {
+	attitudeTimer = setInterval(function () {
+		const randomData = getRandom_attitude()
+		const { roll: targetRoll, pitch: targetPitch, yaw: targetYaw } = randomData
 
-		createSphere()
-		createHorizonImage()
-	}
+		update_attitude(targetRoll, targetPitch, targetYaw)
+		updateHorizon(targetRoll, targetPitch)
+	}, 2000)
+}
 
-	// Функция для обновления смещения текстуры по горизонтали
-	function updateTextureOffsetX() {
-		sphere.material.map.offset.set(textureOffsetX, 0)
-	}
+function init() {
+	scene = new THREE.Scene()
+	const horizonContainer = document.querySelector('.horizon')
+	const width = horizonContainer.clientWidth
+	const height = horizonContainer.clientHeight
+	const aspectRatio = width / height
+	const fov = 48
+	const near = 0.1
+	const far = 1000
 
-	// Функция для обновления изображения горизонта
-	function updateHorizon(roll) {
-		const rollAngle = THREE.MathUtils.degToRad(roll)
-		horizon.style.transform = `translate(-50%, -50%) rotate(${-rollAngle}rad)`
-	}
+	camera = new THREE.PerspectiveCamera(fov, aspectRatio, near, far)
+	camera.position.z = 5
 
-	// Функция для анимации
-	function animate() {
-		requestAnimationFrame(animate)
-		renderer.clear()
+	renderer = new THREE.WebGLRenderer({ alpha: true })
+	renderer.setSize(width, height)
 
-		const targetRoll = THREE.MathUtils.degToRad(roll)
-		const targetPitch = THREE.MathUtils.degToRad(pitch)
-		const targetYaw = THREE.MathUtils.degToRad(yaw)
+	horizonContainer.innerHTML = ''
+	horizonContainer.appendChild(renderer.domElement)
 
-		const deltaRoll = (targetRoll - sphere.rotation.z) * 0.05 // Уменьшаем шаг изменения угла
-		const deltaPitch = (targetPitch - sphere.rotation.x) * 0.05 // Уменьшаем шаг изменения угла
-		const deltaYaw = (targetYaw - sphere.rotation.y) * 0.05 // Уменьшаем шаг изменения угла
+	createSphere()
+	createHorizonImage()
+}
 
-		sphere.rotation.x += deltaPitch
-		sphere.rotation.y += deltaYaw
-		sphere.rotation.z += deltaRoll
+function updateTextureOffsetX() {
+	sphere.material.map.offset.set(textureOffsetX, 0)
+}
 
-		updateTextureOffsetX()
-		renderer.render(scene, camera)
-	}
+function updateHorizon(roll) {
+	const rollAngle = THREE.MathUtils.degToRad(roll)
+	horizon.style.transform = `translate(-50%, -50%) rotate(${-rollAngle}rad)`
+}
 
-	// Инициализация сцены и запуск таймера аттитюда
-	init()
-	startAttitudeTimer()
-})()
+function animate() {
+	requestAnimationFrame(animate)
+	renderer.clear()
+
+	const targetRoll = THREE.MathUtils.degToRad(roll)
+	const targetPitch = THREE.MathUtils.degToRad(pitch)
+	const targetYaw = THREE.MathUtils.degToRad(yaw)
+
+	const deltaRoll = (targetRoll - sphere.rotation.z) * 0.05
+	const deltaPitch = (targetPitch - sphere.rotation.x) * 0.05
+	const deltaYaw = (targetYaw - sphere.rotation.y) * 0.05
+
+	sphere.rotation.x += deltaPitch
+	sphere.rotation.y += deltaYaw
+	sphere.rotation.z += deltaRoll
+
+	updateTextureOffsetX()
+	renderer.render(scene, camera)
+}
+
+init()
+startAttitudeTimer()

@@ -52,9 +52,7 @@ class Subject {
 }
 
 class Observer {
-	update(data) {
-		// Реализация метода обновления в подклассах
-	}
+	update(data) {}
 }
 
 class GPSData extends Subject {
@@ -73,32 +71,39 @@ class MapView extends Observer {
 	constructor(map) {
 		super()
 		this.map = map
-		this.routePolyline = null // переменная для хранения полилинии
+		this.routePolyline = null
+		this.previousPositions = []
 	}
 
 	update(data) {
-		// Обновление карты с новыми данными GPS
 		const position = [data.lat, data.lon]
-		this.map.setView(position, this.map.getZoom())
+		const markerPosition = L.latLng(position)
 
-		// Обновление положения полилинии
-		if (this.routePolyline) {
-			this.routePolyline.addLatLng(position)
-		} else {
-			this.routePolyline = L.polyline([], {
-				color: 'purple',
-				weight: 10,
-			}).addTo(this.map)
-			this.routePolyline.addLatLng(position)
+		this.previousPositions.push(markerPosition)
+
+		const maxPreviousPositions = 5
+		if (this.previousPositions.length > maxPreviousPositions) {
+			this.previousPositions.shift()
 		}
+
+		if (this.routePolyline) {
+			this.map.removeLayer(this.routePolyline)
+		}
+
+		this.routePolyline = L.polyline(this.previousPositions, {
+			color: 'purple',
+			weight: 10,
+		}).addTo(this.map)
+
+		this.map.setView(position, this.map.getZoom())
 	}
 }
 
 try {
 	let marker
 	let currentIndex = 0
-	let lastAltitude = 0 // Переменная для хранения последнего значения высоты
-	let lastSpeed = 0 // Переменная для хранения последнего значения скорости
+	let lastAltitude = 0
+	let lastSpeed = 0
 
 	function createMarker(position, rotation) {
 		const marker = L.marker(position, {
@@ -128,54 +133,21 @@ try {
 		const satellitesElement = document.getElementById('satellites')
 		const azimuthElement = document.getElementById('azimuth')
 
-		latitudeElement.textContent = `Latitude: ${Math.round(
-			parseFloat(data.lat)
-		)}`
-		longitudeElement.textContent = `Longitude: ${Math.round(
-			parseFloat(data.lon)
+		latitudeElement.textContent = `Latitude: ${parseFloat(data.lat).toFixed(5)}`
+		longitudeElement.textContent = `Longitude: ${parseFloat(data.lon).toFixed(
+			5
 		)}`
 
 		animateValue(
 			altitudeElement,
-			lastAltitude, // Используем последнее значение высоты как начальное
+			lastAltitude,
 			Math.round(parseFloat(data.alt)),
 			500
 		)
-		animateValue(
-			speedElement,
-			lastSpeed, // Используем последнее значение скорости как начальное
-			Math.round(parseFloat(data.vel)),
-			500
-		)
-
-		// Обновляем значения скорости для каждого контейнера (-10, -5, +5, +10)
-		animateValue(
-			document.getElementById('speed-minus-10'),
-			Math.round(lastSpeed - 10),
-			Math.round(parseFloat(data.vel) - 10),
-			500
-		)
-		animateValue(
-			document.getElementById('speed-minus-5'),
-			Math.round(lastSpeed - 5),
-			Math.round(parseFloat(data.vel) - 5),
-			500
-		)
-		animateValue(
-			document.getElementById('speed-plus-5'),
-			Math.round(lastSpeed + 5),
-			Math.round(parseFloat(data.vel) + 5),
-			500
-		)
-		animateValue(
-			document.getElementById('speed-plus-10'),
-			Math.round(lastSpeed + 10),
-			Math.round(parseFloat(data.vel) + 10),
-			500
-		)
+		animateValue(speedElement, lastSpeed, Math.round(parseFloat(data.vel)), 500)
 
 		satellitesElement.textContent = `Satellites: ${data.satellites_visible}`
-		azimuthElement.textContent = `${Math.round(parseFloat(data.cog))}°`
+		azimuthElement.textContent = `${parseFloat(data.cog).toFixed(0)}°`
 
 		const position = [data.lat, data.lon]
 
@@ -191,30 +163,25 @@ try {
 			map.removeLayer(marker)
 		}
 
-		// Добавляем вызов функции createMarker
 		marker = createMarker(position, parseFloat(data.cog).toFixed(0))
 
-		// После добавления маркера на карту убедитесь, что вы его отображаете
 		marker.addTo(map)
 
 		const arrowMarker = document.querySelector('.map-overlay-arrow')
-		arrowMarker.style.transform = `translate(-50%, -50%) rotate(${Math.round(
-			parseFloat(data.cog)
-		)}deg)`
+		arrowMarker.style.transform = `translate(-50%, -50%) rotate(${parseFloat(
+			data.cog
+		).toFixed(0)}deg)`
 
 		document.querySelector('.leaflet-control-attribution').style.display =
 			'none'
 
-		// Обновляем последние значения высоты и скорости
 		lastAltitude = Math.round(parseFloat(data.alt))
 		lastSpeed = Math.round(parseFloat(data.vel))
 	}
 
-	// Создаем экземпляры субъекта и наблюдателя
 	const gpsData = new GPSData()
 	const mapView = new MapView(map)
 
-	// Добавляем наблюдателя в список подписчиков субъекта
 	gpsData.addObserver(mapView)
 
 	function update_gps_global_int() {
@@ -249,33 +216,35 @@ try {
 
 		updateView(randomData)
 
-		//  setData() для уведомления наблюдателей о новых данных
 		gpsData.setData(randomData)
+	}
+
+	function animateValue(element, start, end, duration, unit = '') {
+		let startTimestamp = null
+		const step = timestamp => {
+			if (!startTimestamp) startTimestamp = timestamp
+			const progress = Math.min((timestamp - startTimestamp) / duration, 1)
+			element.textContent =
+				Math.round(start + progress * (end - start) || 0).toString() + unit
+			if (progress < 1) {
+				window.requestAnimationFrame(step)
+			}
+		}
+		window.requestAnimationFrame(step)
 	}
 
 	update_gps_global_int()
 	setInterval(update_gps_global_int, 2000)
-} catch {
-	document.querySelector('.leaflet-control-attribution').style.display = 'none'
-	const message = document.createElement('div')
-	message.innerHTML = 'нет GPS'
-	message.classList.add('centered-message')
+} catch (error) {
+	if (error instanceof TypeError && error.message.includes('undefined')) {
+		document.querySelector('.leaflet-control-attribution').style.display =
+			'none'
+		const message = document.createElement('div')
+		message.innerHTML = 'no GPS'
+		message.classList.add('centered-message')
 
-	// Добавляем сообщение в документ
-	document.body.appendChild(message)
-}
-
-// Функция для анимации обновления значений
-function animateValue(element, start, end, duration, unit = '') {
-	let startTimestamp = null
-	const step = timestamp => {
-		if (!startTimestamp) startTimestamp = timestamp
-		const progress = Math.min((timestamp - startTimestamp) / duration, 1)
-		element.textContent =
-			(start + progress * (end - start) || 0).toFixed(0) + unit // Изменено на toFixed(0)
-		if (progress < 1) {
-			window.requestAnimationFrame(step)
-		}
+		document.getElementById('map').appendChild(message)
+	} else {
+		console.error('An error occurred:', error)
 	}
-	window.requestAnimationFrame(step)
 }
