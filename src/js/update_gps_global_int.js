@@ -1,6 +1,6 @@
-import { getRandom_gps_global_int } from './getRandom.js'
 import { routeCoordinates } from './route.js'
 
+let update_gps_global_int
 const iconWidth = 50
 const iconHeight = 50
 
@@ -55,77 +55,25 @@ class Observer {
 	update(data) {}
 }
 
-class GPSData extends Subject {
-	constructor() {
-		super()
-		this.data = {}
-	}
-
-	setData(data) {
-		this.data = data
-		this.notify(data)
-	}
-}
-
-class MapView extends Observer {
-	constructor(map) {
-		super()
-		this.map = map
-		this.routePolyline = null
-		this.previousPositions = []
-	}
-
-	update(data) {
-		const position = [data.lat, data.lon]
-		const markerPosition = L.latLng(position)
-
-		this.previousPositions.push(markerPosition)
-
-		const maxPreviousPositions = 5
-		if (this.previousPositions.length > maxPreviousPositions) {
-			this.previousPositions.shift()
-		}
-
-		if (this.routePolyline) {
-			this.map.removeLayer(this.routePolyline)
-		}
-
-		this.routePolyline = L.polyline(this.previousPositions, {
-			color: 'purple',
-			weight: 10,
-		}).addTo(this.map)
-
-		this.map.setView(position, this.map.getZoom())
-	}
-}
-
 try {
 	let marker
 	let currentIndex = 0
 	let lastAltitude = 0
 	let lastSpeed = 0
+	let routePolyline = null
+	let previousPositions = []
 
-	function createMarker(position, rotation) {
-		const marker = L.marker(position, {
-			icon: Icon,
-			rotationOrigin: 'center center',
-			riseOnHover: true,
-			rotationAngle: rotation,
-		}).addTo(map)
-		return marker
-	}
+	update_gps_global_int = function update_gps_global_int(data) {
+		console.log(
+			`Latitude: ${data.lat.toFixed(5)}, Longitude: ${data.lon.toFixed(
+				5
+			)}, Altitude: ${data.alt.toFixed(5)}, Speed: ${data.vel.toFixed(
+				1
+			)} m/s, Satellites: ${
+				data.satellites_visible
+			}, Azimuth: ${data.cog.toFixed(0)}`
+		)
 
-	function getAzimuth(currentLat, currentLon, nextLat, nextLon) {
-		const dLat = nextLat - currentLat
-		const dLon = nextLon - currentLon
-
-		const radianAngle = Math.atan2(dLon, dLat)
-		const degreeAngle = (radianAngle * 180) / Math.PI
-
-		return degreeAngle >= 0 ? degreeAngle : 360 + degreeAngle
-	}
-
-	function updateView(data) {
 		const latitudeElement = document.getElementById('latitude')
 		const longitudeElement = document.getElementById('longitude')
 		const altitudeElement = document.getElementById('altitude')
@@ -163,9 +111,13 @@ try {
 			map.removeLayer(marker)
 		}
 
-		marker = createMarker(position, parseFloat(data.cog).toFixed(0))
-
-		marker.addTo(map)
+		// Create marker
+		marker = L.marker(position, {
+			icon: Icon,
+			rotationOrigin: 'center center',
+			riseOnHover: true,
+			rotationAngle: parseFloat(data.cog).toFixed(0),
+		}).addTo(map)
 
 		const arrowMarker = document.querySelector('.map-overlay-arrow')
 		arrowMarker.style.transform = `translate(-50%, -50%) rotate(${parseFloat(
@@ -177,46 +129,19 @@ try {
 
 		lastAltitude = Math.round(parseFloat(data.alt))
 		lastSpeed = Math.round(parseFloat(data.vel))
-	}
 
-	const gpsData = new GPSData()
-	const mapView = new MapView(map)
+		// Update polyline
+		const markerPosition = L.latLng(position)
+		previousPositions.push(markerPosition)
 
-	gpsData.addObserver(mapView)
+		if (!routePolyline) {
+			routePolyline = L.polyline([], {
+				color: 'purple',
+				weight: 10,
+			}).addTo(map)
+		}
 
-	function update_gps_global_int() {
-		const currentCoordinates = routeCoordinates[currentIndex]
-		currentIndex = (currentIndex + 1) % routeCoordinates.length
-
-		const nextCoordinates = routeCoordinates[currentIndex]
-
-		const randomData = getRandom_gps_global_int()
-
-		randomData.lat = currentCoordinates[0]
-		randomData.lon = currentCoordinates[1]
-
-		randomData.cog = getAzimuth(
-			currentCoordinates[0],
-			currentCoordinates[1],
-			nextCoordinates[0],
-			nextCoordinates[1]
-		)
-
-		console.log(
-			`Latitude: ${randomData.lat.toFixed(
-				5
-			)}, Longitude: ${randomData.lon.toFixed(
-				5
-			)}, Altitude: ${randomData.alt.toFixed(
-				5
-			)}, Speed: ${randomData.vel.toFixed(1)} m/s, Satellites: ${
-				randomData.satellites_visible
-			}, Azimuth: ${randomData.cog.toFixed(0)}`
-		)
-
-		updateView(randomData)
-
-		gpsData.setData(randomData)
+		routePolyline.setLatLngs(previousPositions)
 	}
 
 	function animateValue(element, start, end, duration, unit = '') {
@@ -233,8 +158,46 @@ try {
 		window.requestAnimationFrame(step)
 	}
 
-	update_gps_global_int()
-	setInterval(update_gps_global_int, 2000)
+	// Генерация и отправка данных в функцию update_gps_global_int
+	function simulateGPSData() {
+		const currentCoordinates = routeCoordinates[currentIndex]
+		currentIndex = (currentIndex + 1) % routeCoordinates.length
+
+		const nextCoordinates = routeCoordinates[currentIndex]
+
+		const randomData = getRandomData(currentCoordinates, nextCoordinates)
+
+		update_gps_global_int(randomData)
+	}
+
+	function getRandomData(currentCoordinates, nextCoordinates) {
+		return {
+			lat: currentCoordinates[0],
+			lon: currentCoordinates[1],
+			alt: Math.floor(Math.random() * 1000),
+			vel: Math.random() * 100,
+			satellites_visible: Math.floor(Math.random() * 20),
+			cog: getAzimuth(
+				currentCoordinates[0],
+				currentCoordinates[1],
+				nextCoordinates[0],
+				nextCoordinates[1]
+			),
+		}
+	}
+
+	function getAzimuth(currentLat, currentLon, nextLat, nextLon) {
+		const dLat = nextLat - currentLat
+		const dLon = nextLon - currentLon
+
+		const radianAngle = Math.atan2(dLon, dLat)
+		const degreeAngle = (radianAngle * 180) / Math.PI
+
+		return degreeAngle >= 0 ? degreeAngle : 360 + degreeAngle
+	}
+
+	simulateGPSData()
+	setInterval(simulateGPSData, 2000)
 } catch (error) {
 	if (error instanceof TypeError && error.message.includes('undefined')) {
 		document.querySelector('.leaflet-control-attribution').style.display =
@@ -248,3 +211,5 @@ try {
 		console.error('An error occurred:', error)
 	}
 }
+
+export default update_gps_global_int
