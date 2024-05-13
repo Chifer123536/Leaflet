@@ -1,6 +1,10 @@
 /* * {
 	pointer-events: none !important ;
 } */
+.leaflet-control-attribution {
+	display: none;
+}
+
 body {
 	margin: 0;
 	padding: 0;

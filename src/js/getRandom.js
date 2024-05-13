@@ -153,3 +153,13 @@ function getRandomFlightMode() {
 	const randomIndex = Math.floor(Math.random() * flightModes.length)
 	return flightModes[randomIndex]
 }
+
+export function getAzimuth(currentLat, currentLon, nextLat, nextLon) {
+	const dLat = nextLat - currentLat
+	const dLon = nextLon - currentLon
+
+	const radianAngle = Math.atan2(dLon, dLat)
+	const degreeAngle = (radianAngle * 180) / Math.PI
+
+	return degreeAngle >= 0 ? degreeAngle : 360 + degreeAngle
+}

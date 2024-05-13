@@ -1,6 +1,9 @@
 import { routeCoordinates } from './route.js'
 
-let update_gps_global_int
+let marker
+let routePolyline = null
+let previousPositions = []
+
 const iconWidth = 50
 const iconHeight = 50
 
@@ -31,17 +34,13 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const mapElement = document.getElementById('map')
 const map = L.map(mapElement, mapOptions)
 
-class Subject {
+class GPSDataSubject {
 	constructor() {
 		this.observers = []
 	}
 
 	addObserver(observer) {
 		this.observers.push(observer)
-	}
-
-	removeObserver(observer) {
-		this.observers = this.observers.filter(obs => obs !== observer)
 	}
 
 	notify(data) {
@@ -51,100 +50,42 @@ class Subject {
 	}
 }
 
-class Observer {
-	update(data) {}
-}
-
-try {
-	let marker
-	let currentIndex = 0
-	let lastAltitude = 0
-	let lastSpeed = 0
-	let routePolyline = null
-	let previousPositions = []
-
-	update_gps_global_int = function update_gps_global_int(data) {
-		console.log(
-			`Latitude: ${data.lat.toFixed(5)}, Longitude: ${data.lon.toFixed(
-				5
-			)}, Altitude: ${data.alt.toFixed(5)}, Speed: ${data.vel.toFixed(
-				1
-			)} m/s, Satellites: ${
-				data.satellites_visible
-			}, Azimuth: ${data.cog.toFixed(0)}`
-		)
-
-		const latitudeElement = document.getElementById('latitude')
-		const longitudeElement = document.getElementById('longitude')
-		const altitudeElement = document.getElementById('altitude')
-		const speedElement = document.getElementById('speed')
-		const satellitesElement = document.getElementById('satellites')
-		const azimuthElement = document.getElementById('azimuth')
-
-		latitudeElement.textContent = `Latitude: ${parseFloat(data.lat).toFixed(5)}`
-		longitudeElement.textContent = `Longitude: ${parseFloat(data.lon).toFixed(
-			5
-		)}`
-
-		animateValue(
-			altitudeElement,
-			lastAltitude,
-			Math.round(parseFloat(data.alt)),
-			500
-		)
-		animateValue(speedElement, lastSpeed, Math.round(parseFloat(data.vel)), 500)
-
-		satellitesElement.textContent = `Satellites: ${data.satellites_visible}`
-		azimuthElement.textContent = `${parseFloat(data.cog).toFixed(0)}°`
-
-		const position = [data.lat, data.lon]
-
-		map.setView(position, map.getZoom())
-
-		if (!map.hasLayer(osm)) {
-			osm.addTo(map)
-		} else {
-			osm.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
-		}
-
-		if (marker) {
-			map.removeLayer(marker)
-		}
-
-		// Create marker
-		marker = L.marker(position, {
-			icon: Icon,
-			rotationOrigin: 'center center',
-			riseOnHover: true,
-			rotationAngle: parseFloat(data.cog).toFixed(0),
-		}).addTo(map)
-
-		const arrowMarker = document.querySelector('.map-overlay-arrow')
-		arrowMarker.style.transform = `translate(-50%, -50%) rotate(${parseFloat(
-			data.cog
-		).toFixed(0)}deg)`
-
-		document.querySelector('.leaflet-control-attribution').style.display =
-			'none'
-
-		lastAltitude = Math.round(parseFloat(data.alt))
-		lastSpeed = Math.round(parseFloat(data.vel))
-
-		// Update polyline
-		const markerPosition = L.latLng(position)
-		previousPositions.push(markerPosition)
-
-		if (!routePolyline) {
-			routePolyline = L.polyline([], {
-				color: 'purple',
-				weight: 10,
-			}).addTo(map)
-		}
-
-		routePolyline.setLatLngs(previousPositions)
+class GPSDataObserver {
+	constructor(elementId) {
+		this.element = document.getElementById(elementId)
 	}
 
-	function animateValue(element, start, end, duration, unit = '') {
+	update(data) {
+		switch (this.element.id) {
+			case 'latitude':
+				this.element.textContent = `Latitude: ${parseFloat(data.lat).toFixed(
+					5
+				)}`
+				break
+			case 'longitude':
+				this.element.textContent = `Longitude: ${parseFloat(data.lon).toFixed(
+					5
+				)}`
+				break
+			case 'altitude':
+				this.animateValue(this.element, Math.round(parseFloat(data.alt)), 500)
+				break
+			case 'speed':
+				this.animateValue(this.element, Math.round(parseFloat(data.vel)), 500)
+				break
+			case 'satellites':
+				this.element.textContent = `Satellites: ${data.satellites_visible}`
+				break
+			case 'azimuth':
+				this.element.textContent = `${parseFloat(data.cog).toFixed(0)}°`
+				break
+			default:
+				break
+		}
+	}
+
+	animateValue(element, end, duration, unit = '') {
+		let start = parseFloat(element.textContent) || 0
 		let startTimestamp = null
 		const step = timestamp => {
 			if (!startTimestamp) startTimestamp = timestamp
@@ -157,59 +98,74 @@ try {
 		}
 		window.requestAnimationFrame(step)
 	}
+}
 
-	// Генерация и отправка данных в функцию update_gps_global_int
-	function simulateGPSData() {
-		const currentCoordinates = routeCoordinates[currentIndex]
-		currentIndex = (currentIndex + 1) % routeCoordinates.length
+function update_gps_global_int(data) {
+	const gpsDataSubject = new GPSDataSubject()
 
-		const nextCoordinates = routeCoordinates[currentIndex]
+	const latitudeObserver = new GPSDataObserver('latitude')
+	const longitudeObserver = new GPSDataObserver('longitude')
+	const altitudeObserver = new GPSDataObserver('altitude')
+	const speedObserver = new GPSDataObserver('speed')
+	const satellitesObserver = new GPSDataObserver('satellites')
+	const azimuthObserver = new GPSDataObserver('azimuth')
 
-		const randomData = getRandomData(currentCoordinates, nextCoordinates)
+	const observers = [
+		latitudeObserver,
+		longitudeObserver,
+		altitudeObserver,
+		speedObserver,
+		satellitesObserver,
+		azimuthObserver,
+	]
 
-		update_gps_global_int(randomData)
-	}
+	const position = [data.lat, data.lon]
 
-	function getRandomData(currentCoordinates, nextCoordinates) {
-		return {
-			lat: currentCoordinates[0],
-			lon: currentCoordinates[1],
-			alt: Math.floor(Math.random() * 1000),
-			vel: Math.random() * 100,
-			satellites_visible: Math.floor(Math.random() * 20),
-			cog: getAzimuth(
-				currentCoordinates[0],
-				currentCoordinates[1],
-				nextCoordinates[0],
-				nextCoordinates[1]
-			),
-		}
-	}
+	map.setView(position, map.getZoom())
 
-	function getAzimuth(currentLat, currentLon, nextLat, nextLon) {
-		const dLat = nextLat - currentLat
-		const dLon = nextLon - currentLon
-
-		const radianAngle = Math.atan2(dLon, dLat)
-		const degreeAngle = (radianAngle * 180) / Math.PI
-
-		return degreeAngle >= 0 ? degreeAngle : 360 + degreeAngle
-	}
-
-	simulateGPSData()
-	setInterval(simulateGPSData, 2000)
-} catch (error) {
-	if (error instanceof TypeError && error.message.includes('undefined')) {
-		document.querySelector('.leaflet-control-attribution').style.display =
-			'none'
-		const message = document.createElement('div')
-		message.innerHTML = 'no GPS'
-		message.classList.add('centered-message')
-
-		document.getElementById('map').appendChild(message)
+	if (!map.hasLayer(osm)) {
+		osm.addTo(map)
 	} else {
-		console.error('An error occurred:', error)
+		osm.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png')
 	}
+
+	if (marker) {
+		map.removeLayer(marker)
+	}
+
+	marker = L.marker(position, {
+		icon: Icon,
+		rotationOrigin: 'center center',
+		riseOnHover: true,
+		rotationAngle: parseFloat(data.cog).toFixed(0),
+	}).addTo(map)
+
+	const arrowMarker = document.querySelector('.map-overlay-arrow')
+	arrowMarker.style.transform = `translate(-50%, -50%) rotate(${parseFloat(
+		data.cog
+	).toFixed(0)}deg)`
+
+	document.querySelector('.leaflet-control-attribution').style.display = 'none'
+
+	// Обновление данных и уведомление наблюдателей
+	gpsDataSubject.notify(data)
+
+	// Обновление полилинии
+	const markerPosition = L.latLng(position)
+	previousPositions.push(markerPosition)
+
+	if (!routePolyline) {
+		routePolyline = L.polyline([], {
+			color: 'purple',
+			weight: 10,
+		}).addTo(map)
+	}
+
+	routePolyline.setLatLngs(previousPositions)
+
+	observers.forEach(observer => {
+		observer.update(data)
+	})
 }
 
 export default update_gps_global_int
