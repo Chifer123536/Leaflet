@@ -39,8 +39,6 @@ try {
 	setInterval(simulateGPSData, 2000)
 } catch (error) {
 	if (error instanceof TypeError && error.message.includes('undefined')) {
-		document.querySelector('.leaflet-control-attribution').style.display =
-			'none'
 		const message = document.createElement('div')
 		message.innerHTML = 'no GPS'
 		message.classList.add('centered-message')
