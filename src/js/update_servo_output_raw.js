@@ -1,45 +1,51 @@
-import { getRandom_servo_output_raw } from './getRandom.js'
-;(function () {
+export function update_servo_output_raw(data) {
 	try {
+		const servoOutputRawContainer = document.querySelector('.servo_output_raw')
 		const engineMarkers = {}
 
-		function createEngineStrip(id, width, height, top, engineNumber) {
-			const engineStrip = document.createElement('li')
-			engineStrip.classList.add('engine-strip')
-			engineStrip.style.width = `${width}px`
-			engineStrip.style.height = `${height}px`
-			engineStrip.style.top = `${top}px`
-			engineStrip.id = id
+		function createOrUpdateEngineStrip(id, width, height, top, engineNumber) {
+			let engineStrip = document.getElementById(id)
 
-			const engineContainer = document.createElement('div')
-			engineContainer.classList.add('engine-container')
-			engineStrip.appendChild(engineContainer)
+			if (!engineStrip) {
+				engineStrip = document.createElement('li')
+				engineStrip.classList.add('engine-strip')
+				engineStrip.style.width = `${width}px`
+				engineStrip.style.height = `${height}px`
+				engineStrip.style.top = `${top}px`
+				engineStrip.id = id
 
-			const rearEngineImage = document.createElement('img')
-			rearEngineImage.classList.add('rear-engine-strip-image')
-			rearEngineImage.src = 'images/Rear Engine Strip.png'
-			rearEngineImage.style.width = '8px'
-			rearEngineImage.style.height = '70px'
-			rearEngineImage.style.float = 'left'
-			engineContainer.appendChild(rearEngineImage)
+				const engineContainer = document.createElement('div')
+				engineContainer.classList.add('engine-container')
+				engineStrip.appendChild(engineContainer)
 
-			const engineImage = document.createElement('img')
-			engineImage.classList.add('engine-strip-image')
-			engineImage.src = 'images/Engine Strip.png'
-			engineImage.style.width = '20px'
-			engineImage.style.height = '6px'
-			engineImage.style.float = 'right'
-			engineContainer.appendChild(engineImage)
+				const rearEngineImage = document.createElement('img')
+				rearEngineImage.classList.add('rear-engine-strip-image')
+				rearEngineImage.src = 'images/Rear Engine Strip.png'
+				rearEngineImage.style.width = '8px'
+				rearEngineImage.style.height = '70px'
+				rearEngineImage.style.float = 'left'
+				engineContainer.appendChild(rearEngineImage)
 
-			const engineNumberText = document.createElement('span')
-			engineNumberText.classList.add('engine-number')
-			engineNumberText.textContent = engineNumber
-			engineContainer.appendChild(engineNumberText)
+				const engineImage = document.createElement('img')
+				engineImage.classList.add('engine-strip-image')
+				engineImage.src = 'images/Engine Strip.png'
+				engineImage.style.width = '20px'
+				engineImage.style.height = '6px'
+				engineImage.style.float = 'right'
+				engineContainer.appendChild(engineImage)
 
-			const powerText = document.createElement('span')
-			powerText.classList.add('power-text')
-			powerText.textContent = '0%'
-			engineContainer.appendChild(powerText)
+				const engineNumberText = document.createElement('span')
+				engineNumberText.classList.add('engine-number')
+				engineNumberText.textContent = engineNumber
+				engineContainer.appendChild(engineNumberText)
+
+				const powerText = document.createElement('span')
+				powerText.classList.add('power-text')
+				powerText.textContent = '0%'
+				engineContainer.appendChild(powerText)
+
+				servoOutputRawContainer.appendChild(engineStrip)
+			}
 
 			return engineStrip
 		}
@@ -86,44 +92,34 @@ import { getRandom_servo_output_raw } from './getRandom.js'
 			powerText.textContent = `${enginePower.toFixed(0)}%`
 		}
 
-		function updateServoOutputRaw() {
-			const enginePowerValues = getRandom_servo_output_raw()
-			const servoOutputRawContainer =
-				document.querySelector('.servo_output_raw')
+		const enginePowerValues = data || {} // Используем пустой объект вместо случайных данных
 
-			const engineData = []
+		const engineData = []
 
-			Object.entries(enginePowerValues).forEach(([engineId, power], index) => {
-				const enginePower = Math.min(100, Math.max(0, power))
-				const engineStripId = `engine-strip-${index + 1}`
-				let engineStrip = engineMarkers[engineId]
+		Object.entries(enginePowerValues).forEach(([engineId, power], index) => {
+			const enginePower = Math.min(100, Math.max(0, power))
+			const engineStripId = `engine-strip-${index + 1}`
+			let engineStrip = engineMarkers[engineId]
 
-				if (!engineStrip) {
-					engineStrip = createEngineStrip(
-						engineStripId,
-						28,
-						100,
-						index * 100,
-						index + 1
-					)
-					servoOutputRawContainer.appendChild(engineStrip)
-					engineMarkers[engineId] = engineStrip
-				}
+			if (!engineStrip) {
+				engineStrip = createOrUpdateEngineStrip(
+					engineStripId,
+					28,
+					100,
+					index * 100,
+					index + 1
+				)
+				engineMarkers[engineId] = engineStrip
+			}
 
-				updateEngineStrip(engineStrip, enginePower)
-				engineData.push(`Engine ${index + 1}: ${enginePower.toFixed(0)}%`)
-			})
+			updateEngineStrip(engineStrip, enginePower)
+			engineData.push(`Engine ${index + 1}: ${enginePower.toFixed(0)}%`)
+		})
 
-			console.log(engineData.join(', '))
-		}
-
-		function init() {
-			updateServoOutputRaw()
-			setInterval(updateServoOutputRaw, 2000)
-		}
-
-		init()
+		console.log(engineData.join(', '))
 	} catch (error) {
 		console.error('An error occurred:', error)
 	}
-})()
+}
+
+export default update_servo_output_raw

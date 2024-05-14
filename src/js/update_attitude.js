@@ -1,14 +1,8 @@
-import { getRandom_attitude } from './getRandom.js'
-
 let scene, camera, renderer, sphere, horizonImage
-let attitudeTimer
-
 let roll = 0
 let pitch = 0
 let yaw = 0
-
 let horizon
-
 let textureOffsetX = 0.5
 
 function createSphere() {
@@ -87,7 +81,9 @@ function createHorizonImage() {
 	horizon = document.getElementById('horizont-line')
 }
 
-function update_attitude(newRoll, newPitch, newYaw) {
+function updateAttitude(data) {
+	const { roll: newRoll, pitch: newPitch, yaw: newYaw } = data
+
 	roll = newRoll
 	pitch = newPitch
 	yaw = newYaw
@@ -97,16 +93,8 @@ function update_attitude(newRoll, newPitch, newYaw) {
 			2
 		)}`
 	)
-}
 
-function startAttitudeTimer() {
-	attitudeTimer = setInterval(function () {
-		const randomData = getRandom_attitude()
-		const { roll: targetRoll, pitch: targetPitch, yaw: targetYaw } = randomData
-
-		update_attitude(targetRoll, targetPitch, targetYaw)
-		updateHorizon(targetRoll, targetPitch)
-	}, 2000)
+	updateHorizon(newRoll)
 }
 
 function init() {
@@ -162,4 +150,5 @@ function animate() {
 }
 
 init()
-startAttitudeTimer()
+
+export default updateAttitude
