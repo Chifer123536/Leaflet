@@ -1,29 +1,13 @@
+import Panel from './Panel.js' // Импортируем класс Panel из файла Panel.js
+import { routeCoordinates } from './route.js'
+import * as Random from './getRandom.js'
 import update_gps_global_int from './update_gps_global_int.js'
 import update_system_status from './update_system_status.js'
-import update_time from './update_time.js' // Импорт функции update_time
+import update_time from './update_time.js'
 import update_servo_output_raw from './update_servo_output_raw.js'
 import update_attitude from './update_attitude.js'
-import { routeCoordinates } from './route.js'
-import * as Random from './getRandom.js' // Подключаем все экспортированные функции из файла getRandom.js
 
-class Panel {
-	constructor() {
-		this.updateFunctions = [] // Массив функций для обновления данных
-	}
-
-	// Добавление функции обновления данных
-	addUpdateFunction(updateFunction) {
-		this.updateFunctions.push(updateFunction)
-	}
-
-	// Обновление экрана
-	update() {
-		this.updateFunctions.forEach(func => func())
-	}
-}
-
-// Создаем экземпляр панели
-const panel = new Panel()
+const panel = new Panel() // Создаем экземпляр панели
 
 // Функция обновления данных для GPS
 function updateGPS() {
@@ -81,8 +65,7 @@ panel.addUpdateFunction(updateSystemStatus)
 panel.addUpdateFunction(updateServoOutputRaw)
 panel.addUpdateFunction(updateAttitude)
 
-// Инициализация переменных
-let currentIndex = 0
+let currentIndex = 0 // Инициализация переменной
 
 try {
 	// Генерация и отправка данных в функцию update_gps_global_int

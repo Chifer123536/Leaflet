@@ -1,5 +1,3 @@
-import { routeCoordinates } from './route.js'
-
 let marker
 let routePolyline = null
 let previousPositions = []
@@ -34,93 +32,28 @@ const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 const mapElement = document.getElementById('map')
 const map = L.map(mapElement, mapOptions)
 
-class GPSDataSubject {
-	constructor() {
-		this.observers = []
-	}
+function animateValue(element, end, duration = 500, unit = '') {
+	const start = parseFloat(element.textContent) || 0
+	const startTime = performance.now()
 
-	addObserver(observer) {
-		this.observers.push(observer)
-	}
+	const update = currentTime => {
+		const elapsedTime = currentTime - startTime
+		const progress = Math.min(elapsedTime / duration, 1)
+		element.textContent =
+			Math.round(start + progress * (end - start)).toString() + unit
 
-	notify(data) {
-		this.observers.forEach(observer => {
-			observer.update(data)
-		})
-	}
-}
-
-class GPSDataObserver {
-	constructor(elementId) {
-		this.element = document.getElementById(elementId)
-	}
-
-	update(data) {
-		switch (this.element.id) {
-			case 'latitude':
-				this.element.textContent = `Latitude: ${parseFloat(data.lat).toFixed(
-					5
-				)}`
-				break
-			case 'longitude':
-				this.element.textContent = `Longitude: ${parseFloat(data.lon).toFixed(
-					5
-				)}`
-				break
-			case 'altitude':
-				this.animateValue(this.element, Math.round(parseFloat(data.alt)), 500)
-				break
-			case 'speed':
-				this.animateValue(this.element, Math.round(parseFloat(data.vel)), 500)
-				break
-			case 'satellites':
-				this.element.textContent = `Satellites: ${data.satellites_visible}`
-				break
-			case 'azimuth':
-				this.element.textContent = `${parseFloat(data.cog).toFixed(0)}°`
-				break
-			default:
-				break
+		if (progress < 1) {
+			requestAnimationFrame(update)
 		}
 	}
 
-	animateValue(element, end, duration, unit = '') {
-		let start = parseFloat(element.textContent) || 0
-		let startTimestamp = null
-		const step = timestamp => {
-			if (!startTimestamp) startTimestamp = timestamp
-			const progress = Math.min((timestamp - startTimestamp) / duration, 1)
-			element.textContent =
-				Math.round(start + progress * (end - start) || 0).toString() + unit
-			if (progress < 1) {
-				window.requestAnimationFrame(step)
-			}
-		}
-		window.requestAnimationFrame(step)
-	}
+	requestAnimationFrame(update)
 }
 
 function update_gps_global_int(data) {
-	const gpsDataSubject = new GPSDataSubject()
-
-	const latitudeObserver = new GPSDataObserver('latitude')
-	const longitudeObserver = new GPSDataObserver('longitude')
-	const altitudeObserver = new GPSDataObserver('altitude')
-	const speedObserver = new GPSDataObserver('speed')
-	const satellitesObserver = new GPSDataObserver('satellites')
-	const azimuthObserver = new GPSDataObserver('azimuth')
-
-	const observers = [
-		latitudeObserver,
-		longitudeObserver,
-		altitudeObserver,
-		speedObserver,
-		satellitesObserver,
-		azimuthObserver,
-	]
-
 	const position = [data.lat, data.lon]
 
+	// Update map
 	map.setView(position, map.getZoom())
 
 	if (!map.hasLayer(osm)) {
@@ -145,14 +78,30 @@ function update_gps_global_int(data) {
 		data.cog
 	).toFixed(0)}deg)`
 
-	document.querySelector('.leaflet-control-attribution').style.display = 'none'
+	document.getElementById('latitude').textContent = `Latitude: ${parseFloat(
+		data.lat
+	).toFixed(5)}`
+	document.getElementById('longitude').textContent = `Longitude: ${parseFloat(
+		data.lon
+	).toFixed(5)}`
+	animateValue(
+		document.getElementById('altitude'),
+		Math.round(parseFloat(data.alt))
+	)
+	animateValue(
+		document.getElementById('speed'),
+		Math.round(parseFloat(data.vel))
+	)
+	document.getElementById(
+		'satellites'
+	).textContent = `Satellites: ${data.satellites_visible}`
+	animateValue(
+		document.getElementById('azimuth'),
+		parseFloat(data.cog).toFixed(0)
+	)
 
-	// Обновление данных и уведомление наблюдателей
-	gpsDataSubject.notify(data)
-
-	// Обновление полилинии
-	const markerPosition = L.latLng(position)
-	previousPositions.push(markerPosition)
+	// Update polyline
+	previousPositions.push(L.latLng(position))
 
 	if (!routePolyline) {
 		routePolyline = L.polyline([], {
@@ -162,10 +111,6 @@ function update_gps_global_int(data) {
 	}
 
 	routePolyline.setLatLngs(previousPositions)
-
-	observers.forEach(observer => {
-		observer.update(data)
-	})
 }
 
 export default update_gps_global_int
