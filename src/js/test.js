@@ -20,11 +20,21 @@ let dataBuffer = {
 
 // Функция обновления данных на панели
 function updateData() {
-	update_gps_global_int(dataBuffer.gps)
-	update_time(dataBuffer.time)
-	update_system_status(dataBuffer.systemStatus)
-	update_servo_output_raw(dataBuffer.servoOutput)
-	update_attitude(dataBuffer.attitude)
+	if (dataBuffer.gps) {
+		update_gps_global_int(dataBuffer.gps)
+	}
+	if (dataBuffer.time) {
+		update_time(dataBuffer.time)
+	}
+	if (dataBuffer.systemStatus) {
+		update_system_status(dataBuffer.systemStatus)
+	}
+	if (dataBuffer.servoOutput) {
+		update_servo_output_raw(dataBuffer.servoOutput)
+	}
+	if (dataBuffer.attitude) {
+		update_attitude(dataBuffer.attitude)
+	}
 }
 
 // Добавляем функцию обновления в панель
