@@ -1,5 +1,5 @@
 * {
-	/* pointer-events: none !important ; */
+	pointer-events: none !important ;
 }
 .leaflet-control-attribution {
 	display: none;
