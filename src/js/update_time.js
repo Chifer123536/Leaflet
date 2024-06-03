@@ -4,4 +4,4 @@ function update_time(data) {
 	console.log(`Time: ${data.time_usec}`)
 }
 
-export default update_time // Экспортируем только функцию update_time
+export default update_time 
