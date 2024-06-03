@@ -100,7 +100,6 @@ function update_gps_global_int(data) {
 		parseFloat(data.cog).toFixed(0)
 	)
 
-	// Update polyline
 	previousPositions.push(L.latLng(position))
 
 	if (!routePolyline) {
