@@ -6,7 +6,7 @@
 
 1. Склонируйте репозиторий на ваш компьютер:
 
-https://github.com/Chifer123536/Leaflet
+git clone [https://github.com/Chifer123536/Leaflet](https://github.com/Chifer123536/Leaflet.git)
 
 2. Установите зависимости, выполнив следующую команду в корне проекта:
 
